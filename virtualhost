@@ -23,9 +23,9 @@ CONTENT="<VirtualHost *:80>\n
 
 </VirtualHost>"
 
-[ -z $DOMAIN ] && echo "Enter a domain" || 
-[ -z $FOLDER ]  && echo "Enter document root" ||
-[ -z $ADMINEMAIL ] && echo "Enter admin email address" ||
+[ -z $DOMAIN ] && echo "Missing first argument: domain name (example.local)" || 
+[ -z $FOLDER ]  && echo "Missing second argument: document root (/path/to/folder)" ||
+[ -z $ADMINEMAIL ] && echo "Missing third argument: admin email address" ||
 (sudo echo -e $CONTENT > "/etc/apache2/sites-available/${DOMAIN}.conf" && 
 sudo a2ensite "${DOMAIN}.conf" 1>/dev/null && 
 sudo echo "127.0.0.1  ${DOMAIN}" >> /etc/hosts && 
