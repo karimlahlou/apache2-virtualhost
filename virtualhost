@@ -1,0 +1,33 @@
+#!/bin/bash
+
+[ -z $1 ] || DOMAIN=$1
+[ -z $2 ] || FOLDER=$2
+[ -z $3 ] || ADMINEMAIL=$3
+
+CONTENT="<VirtualHost *:80>\n
+	\tServerName ${DOMAIN}\n
+	\tServerAlias www.${DOMAIN}\n
+
+	\tServerAdmin ${ADMINEMAIL}\n
+	\tDocumentRoot ${FOLDER}\n
+
+	\t<Directory ${FOLDER}>\n
+        \t\tOptions Indexes FollowSymLinks MultiViews\n
+        \t\tAllowOverride All\n
+        \t\tOrder allow,deny\n
+        \t\tallow from all\n
+	\t</Directory>\n
+
+	\tErrorLog \${APACHE_LOG_DIR}/error.log\n
+	\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n
+
+</VirtualHost>"
+
+[ -z $DOMAIN ] && echo "Enter a domain" || 
+[ -z $FOLDER ]  && echo "Enter document root" ||
+[ -z $ADMINEMAIL ] && echo "Enter admin email address" ||
+(sudo echo -e $CONTENT > "/etc/apache2/sites-available/${DOMAIN}.conf" && 
+sudo a2ensite "${DOMAIN}.conf" 1>/dev/null && 
+sudo echo "127.0.0.1  ${DOMAIN}" >> /etc/hosts && 
+sudo /etc/init.d/apache2 reload 1>/dev/null &&
+echo 'VirtualHost has been created!')
